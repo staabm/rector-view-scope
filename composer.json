@@ -2,6 +2,9 @@
     "autoload": {
         "classmap": ["lib/"]
     },
+    "autoload-dev": {
+        "classmap": ["tests/classes/"]
+    },
     "require": {
         "rector/rector": "^0.10.4"
     },
