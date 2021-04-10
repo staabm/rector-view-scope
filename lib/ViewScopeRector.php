@@ -89,6 +89,8 @@ array(
 
         $propertyName = $node->name;
 
+        // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
+        // https://github.com/phpstan/phpstan/discussions/4837
         $classReflection = $this->reflectionProvider->getClass($controllerClass);
         $propertyReflection = $classReflection->getProperty($propertyName, $scope);
 
