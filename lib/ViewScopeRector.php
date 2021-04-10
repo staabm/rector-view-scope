@@ -79,7 +79,6 @@ array(
 
     /**
      * @param class-string $controllerClass
-     * @param string $propertyName
      * @throws \PHPStan\Reflection\MissingPropertyFromReflectionException
      */
     private function inferTypeFromController($controllerClass, Variable $node): TypeNode
