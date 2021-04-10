@@ -47,10 +47,9 @@ array(
             return null;
         }
 
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
-
-        $phpDocInfo->addTagValueNode(new VarTagValueNode(new IdentifierTypeNode('string'), '$'. $node->exprs[0]->name, ''));
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
+        $phpDocInfo->addTagValueNode(new VarTagValueNode(new IdentifierTypeNode('string'), '$'. $node->exprs[0]->name, ''));
 
         return $node;
     }
