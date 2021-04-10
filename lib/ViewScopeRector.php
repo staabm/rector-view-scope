@@ -13,6 +13,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -67,6 +68,7 @@ array(
 
         $inferredType = $this->inferTypeFromController("\IndexController", $variable);
         if (!$inferredType) {
+            // no matching property for the given variable, skip.
             return null;
         }
 
@@ -79,9 +81,8 @@ array(
 
     /**
      * @param class-string $controllerClass
-     * @throws \PHPStan\Reflection\MissingPropertyFromReflectionException
      */
-    private function inferTypeFromController($controllerClass, Variable $node): TypeNode
+    private function inferTypeFromController($controllerClass, Variable $node): ?TypeNode
     {
         /** @var Scope|null $scope */
         $scope = $node->getAttribute(AttributeKey::SCOPE);
@@ -91,7 +92,12 @@ array(
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
         $classReflection = $this->reflectionProvider->getClass($controllerClass);
-        $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+        
+        try {
+            $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+        } catch (MissingPropertyFromReflectionException $e) {
+            return null;
+        }
 
         return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
     }
