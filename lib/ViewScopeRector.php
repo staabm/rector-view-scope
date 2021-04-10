@@ -61,19 +61,26 @@ array(
 )
         */
 
-        $statement = $this->findFirstViewStatement($variable);
-
         $inferredType = $this->inferTypeFromController("\IndexController", $variable);
         if (!$inferredType) {
             // no matching property for the given variable, skip.
             return null;
         }
 
+        $this->declareClassLevelDocBlock($variable, $inferredType);
+
+        return $variable;
+    }
+
+    private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
+    {
+        $statement = $this->findFirstViewStatement($variable);
+
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($statement);
 
         $found = false;
-        foreach($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
+        foreach ($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
             if ($varTagValue->variableName == '$' . $variable->name) {
                 $found = true;
                 break;
@@ -83,11 +90,10 @@ array(
         if (!$found) {
             $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
         }
-
-        return $variable;
     }
 
-    private function findFirstViewStatement(Variable $node): ?Node {
+    private function findFirstViewStatement(Variable $node): ?Node
+    {
         $topLevelParent = $this->findTopLevelStatement($node);
 
         if (!$topLevelParent) {
@@ -99,7 +105,7 @@ array(
         do {
             $previous = $current->getAttribute(AttributeKey::PREVIOUS_NODE);
 
-            if (! $previous instanceof Node) {
+            if (!$previous instanceof Node) {
                 return $current;
             }
 
@@ -108,9 +114,10 @@ array(
         } while (true);
     }
 
-    private function findTopLevelStatement(Variable $node): ?Node {
+    private function findTopLevelStatement(Variable $node): ?Node
+    {
         $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
-        if (! $parent instanceof Node) {
+        if (!$parent instanceof Node) {
             return null;
         }
 
@@ -119,7 +126,7 @@ array(
         do {
             $parent = $parent->getAttribute(AttributeKey::PARENT_NODE);
 
-            if (! $parent instanceof Node) {
+            if (!$parent instanceof Node) {
                 return $toplevelParent;
             }
 
@@ -141,7 +148,7 @@ array(
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
         $classReflection = $this->reflectionProvider->getClass($controllerClass);
-        
+
         try {
             $propertyReflection = $classReflection->getProperty($propertyName, $scope);
         } catch (MissingPropertyFromReflectionException $e) {
