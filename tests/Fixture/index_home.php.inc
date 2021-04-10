@@ -1,6 +1,7 @@
 <?php
 
 echo $hello;
+echo $unknown;
 -----
 <?php
 
@@ -8,3 +9,4 @@ echo $hello;
  * @var string $hello
  */
 echo $hello;
+echo $unknown;
