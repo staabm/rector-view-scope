@@ -42,10 +42,15 @@ array(
     )
 )
         */
-        // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
+
+        if (!isset($node->exprs[0]) || !$node->exprs[0] instanceof Variable) {
+            return null;
+        }
 
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
-        $phpDocInfo->addTagValueNode(new VarTagValueNode(new IdentifierTypeNode('string'), '$hello', ''));
+
+        $phpDocInfo->addTagValueNode(new VarTagValueNode(new IdentifierTypeNode('string'), '$'. $node->exprs[0]->name, ''));
+        // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
 
         return $node;
     }
