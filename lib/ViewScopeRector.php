@@ -79,16 +79,18 @@ array(
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($statement);
 
-        $found = false;
+        $found = null;
         foreach ($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
             if ($varTagValue->variableName == '$' . $variable->name) {
-                $found = true;
+                $found = $varTagValue;
                 break;
             }
         }
 
         if (!$found) {
             $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
+        } else {
+            $found->type = $inferredType;
         }
     }
 
