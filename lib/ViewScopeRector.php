@@ -4,6 +4,7 @@ namespace ViewScopeRector;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
@@ -40,13 +41,13 @@ class ViewScopeRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [Node\Stmt\Echo_::class];
+        return [Variable::class];
     }
 
     /**
-     * @param Node\Stmt\Echo_ $node
+     * @param Variable $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $variable): ?Node
     {
         /*
 array(
@@ -60,11 +61,7 @@ array(
 )
         */
 
-        if (!isset($node->exprs[0]) || !$node->exprs[0] instanceof Variable) {
-            return null;
-        }
-
-        $variable = $node->exprs[0];
+        $statement = $this->findFirstViewStatement($variable);
 
         $inferredType = $this->inferTypeFromController("\IndexController", $variable);
         if (!$inferredType) {
@@ -73,10 +70,62 @@ array(
         }
 
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
-        $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($statement);
 
-        return $node;
+        $found = false;
+        foreach($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
+            if ($varTagValue->variableName == '$' . $variable->name) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
+        }
+
+        return $variable;
+    }
+
+    private function findFirstViewStatement(Variable $node): ?Node {
+        $topLevelParent = $this->findTopLevelStatement($node);
+
+        if (!$topLevelParent) {
+            return null;
+        }
+
+        $current = $topLevelParent;
+
+        do {
+            $previous = $current->getAttribute(AttributeKey::PREVIOUS_NODE);
+
+            if (! $previous instanceof Node) {
+                return $current;
+            }
+
+            $current = $previous;
+
+        } while (true);
+    }
+
+    private function findTopLevelStatement(Variable $node): ?Node {
+        $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
+        if (! $parent instanceof Node) {
+            return null;
+        }
+
+        $toplevelParent = $parent;
+
+        do {
+            $parent = $parent->getAttribute(AttributeKey::PARENT_NODE);
+
+            if (! $parent instanceof Node) {
+                return $toplevelParent;
+            }
+
+            $toplevelParent = $parent;
+
+        } while (true);
     }
 
     /**
