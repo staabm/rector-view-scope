@@ -45,7 +45,7 @@ class ViewScopeRector extends AbstractRector
     }
 
     /**
-     * @param Variable $node
+     * @param Variable $variable
      */
     public function refactor(Node $variable): ?Node
     {
