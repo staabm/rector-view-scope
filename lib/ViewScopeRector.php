@@ -49,18 +49,6 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        /*
-array(
-    0: Stmt_Echo(
-        exprs: array(
-            0: Expr_Variable(
-                name: hello
-            )
-        )
-    )
-)
-        */
-
         $inferredType = $this->inferTypeFromController("\IndexController", $variable);
         if (!$inferredType) {
             // no matching property for the given variable, skip.
@@ -159,15 +147,4 @@ array(
 
         return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
     }
-
-    /*
-    private function createParamDocNode(): PhpDocNode
-    {
-        $paramTagValueNode = new ParamTagValueNode(new IdentifierTypeNode('string'), true, 'name', '');
-
-        $children = [new PhpDocTagNode('@param', $paramTagValueNode)];
-
-        return new PhpDocNode($children);
-    }
-    */
 }
