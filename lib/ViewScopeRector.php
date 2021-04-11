@@ -18,7 +18,7 @@ use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ViewScopeRector extends AbstractRector
@@ -36,7 +36,7 @@ class ViewScopeRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Infer view scope', [new ConfiguredCodeSample('', '')]);
+        return new RuleDefinition('Infer view scope', [new CodeSample('', '')]);
     }
 
     public function getNodeTypes(): array
@@ -45,7 +45,7 @@ class ViewScopeRector extends AbstractRector
     }
 
     /**
-     * @param Variable $node
+     * @param Variable $variable
      */
     public function refactor(Node $variable): ?Node
     {
@@ -60,35 +60,39 @@ class ViewScopeRector extends AbstractRector
         return $variable;
     }
 
+    /**
+     * @return void
+     */
     private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
     {
         $statement = $this->findFirstViewStatement($variable);
+        
+        $variableName = $this->nodeNameResolver->getName($variable);
+        if ($variableName === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($statement);
 
         $found = null;
         foreach ($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
-            if ($varTagValue->variableName == '$' . $variable->name) {
+            if ($varTagValue->variableName == '$' . $variableName) {
                 $found = $varTagValue;
                 break;
             }
         }
 
         if (!$found) {
-            $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
+            $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variableName, ''));
         } else {
             $found->type = $inferredType;
         }
     }
 
-    private function findFirstViewStatement(Variable $node): ?Node
+    private function findFirstViewStatement(Variable $node): Node
     {
         $topLevelParent = $this->findTopLevelStatement($node);
-
-        if (!$topLevelParent) {
-            return null;
-        }
 
         $current = $topLevelParent;
 
@@ -104,11 +108,11 @@ class ViewScopeRector extends AbstractRector
         } while (true);
     }
 
-    private function findTopLevelStatement(Variable $node): ?Node
+    private function findTopLevelStatement(Variable $node): Node
     {
         $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
         if (!$parent instanceof Node) {
-            return null;
+            throw new \RuntimeException("should not happen");
         }
 
         $toplevelParent = $parent;
@@ -132,8 +136,14 @@ class ViewScopeRector extends AbstractRector
     {
         /** @var Scope|null $scope */
         $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($scope === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
-        $propertyName = $node->name;
+        $propertyName = $this->nodeNameResolver->getName($node);
+        if ($propertyName === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
