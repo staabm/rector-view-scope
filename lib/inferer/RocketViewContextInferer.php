@@ -14,6 +14,8 @@ use Rector\StaticTypeMapper\StaticTypeMapper;
 use ViewScopeRector\ContextInferer;
 
 /**
+ * Implements view-variable type inferring for view-scripts in the Rocket-Framework (close-source) context.
+ *
  * @implements ContextInferer<Variable>
  */
 final class RocketViewContextInferer implements ContextInferer
