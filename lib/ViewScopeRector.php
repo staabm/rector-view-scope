@@ -136,8 +136,14 @@ class ViewScopeRector extends AbstractRector
     {
         /** @var Scope|null $scope */
         $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($scope === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
-        $propertyName = $node->name;
+        $propertyName = $this->nodeNameResolver->getName($node);
+        if ($propertyName === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
