@@ -66,20 +66,25 @@ class ViewScopeRector extends AbstractRector
     private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
     {
         $statement = $this->findFirstViewStatement($variable);
+        
+        $variableName = $this->nodeNameResolver->getName($variable);
+        if ($variableName === null) {
+            throw new \RuntimeException("should not happen");
+        }
 
         // https://github.com/rectorphp/rector/blob/main/docs/how_to_work_with_doc_block_and_comments.md
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($statement);
 
         $found = null;
         foreach ($phpDocInfo->getPhpDocNode()->getVarTagValues() as $varTagValue) {
-            if ($varTagValue->variableName == '$' . $variable->name) {
+            if ($varTagValue->variableName == '$' . $variableName) {
                 $found = $varTagValue;
                 break;
             }
         }
 
         if (!$found) {
-            $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variable->name, ''));
+            $phpDocInfo->addTagValueNode(new VarTagValueNode($inferredType, '$' . $variableName, ''));
         } else {
             $found->type = $inferredType;
         }
