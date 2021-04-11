@@ -20,6 +20,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use ViewScopeRector\Inferer\RocketViewContextInferer;
 
 class ViewScopeRector extends AbstractRector
 {
@@ -28,8 +29,7 @@ class ViewScopeRector extends AbstractRector
      */
     private $reflectionProvider;
 
-    public function __construct(ReflectionProvider $reflectionProvider
-    )
+    public function __construct(ReflectionProvider $reflectionProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
     }
@@ -49,20 +49,9 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        if (!$this->isInViewPath($variable)) {
-            return null;
-        }
-        
-        if (!$this->isTopLevelView($variable)) {
-            return null;
-        }
+        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper);
 
-        $controllerClass = $this->findMatchingController($variable);
-        if (!$controllerClass) {
-            return null;
-        }
-
-        $inferredType = $this->inferTypeFromController($controllerClass, $variable);
+        $inferredType = $contextInferer->infer($variable);
         if (!$inferredType) {
             // no matching property for the given variable, skip.
             return null;
@@ -73,24 +62,6 @@ class ViewScopeRector extends AbstractRector
         return $variable;
     }
     
-    private function isInViewPath(Variable $variable):bool {
-        // TODO implement me
-        return true;
-    }
-    
-    private function isTopLevelView(Variable $variable):bool {
-        // TODO implement me
-        return true;
-    }
-    
-    /**
-     * @return class-string|null
-     */
-    private function findMatchingController(Variable $variable): ?string {
-        // TODO implement me
-        return "\IndexController";
-    }
-
     /**
      * @return void
      */
@@ -160,32 +131,5 @@ class ViewScopeRector extends AbstractRector
         } while (true);
     }
 
-    /**
-     * @param class-string $controllerClass
-     */
-    private function inferTypeFromController($controllerClass, Variable $node): ?TypeNode
-    {
-        /** @var Scope|null $scope */
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if ($scope === null) {
-            throw new \RuntimeException("should not happen");
-        }
 
-        $propertyName = $this->nodeNameResolver->getName($node);
-        if ($propertyName === null) {
-            throw new \RuntimeException("should not happen");
-        }
-
-        // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
-        // https://github.com/phpstan/phpstan/discussions/4837
-        $classReflection = $this->reflectionProvider->getClass($controllerClass);
-
-        try {
-            $propertyReflection = $classReflection->getProperty($propertyName, $scope);
-        } catch (MissingPropertyFromReflectionException $e) {
-            return null;
-        }
-
-        return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
-    }
 }
