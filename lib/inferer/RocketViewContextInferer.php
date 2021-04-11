@@ -16,7 +16,8 @@ use ViewScopeRector\ContextInferer;
 /**
  * @implements ContextInferer<Variable>
  */
-final class RocketViewContextInferer implements ContextInferer {
+final class RocketViewContextInferer implements ContextInferer
+{
     /**
      * @var ReflectionProvider
      */
@@ -30,7 +31,8 @@ final class RocketViewContextInferer implements ContextInferer {
      */
     private $staticTypeMapper;
 
-    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper) {
+    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper)
+    {
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->staticTypeMapper = $staticTypeMapper;
@@ -58,12 +60,14 @@ final class RocketViewContextInferer implements ContextInferer {
         return $this->inferTypeFromController($controllerClass, $variable);
     }
 
-    private function isInViewPath(Variable $variable):bool {
+    private function isInViewPath(Variable $variable): bool
+    {
         // TODO implement me
         return true;
     }
 
-    private function isTopLevelView(Variable $variable):bool {
+    private function isTopLevelView(Variable $variable): bool
+    {
         // TODO implement me
         return true;
     }

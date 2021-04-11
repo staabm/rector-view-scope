@@ -61,14 +61,14 @@ class ViewScopeRector extends AbstractRector
 
         return $variable;
     }
-    
+
     /**
      * @return void
      */
     private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
     {
         $statement = $this->findFirstViewStatement($variable);
-        
+
         $variableName = $this->nodeNameResolver->getName($variable);
         if ($variableName === null) {
             throw new \RuntimeException("should not happen");

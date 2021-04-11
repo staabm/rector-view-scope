@@ -8,7 +8,8 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 /**
  * @phpstan-template T of Node
  */
-interface ContextInferer {
+interface ContextInferer
+{
     /**
      * Infers the type for the given node
      *
