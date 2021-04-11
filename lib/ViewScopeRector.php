@@ -107,7 +107,7 @@ class ViewScopeRector extends AbstractRector
     {
         $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
         if (!$parent instanceof Node) {
-            throw new RuntimeException("should not happen");
+            throw new \RuntimeException("should not happen");
         }
 
         $toplevelParent = $parent;
