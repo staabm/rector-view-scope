@@ -78,7 +78,10 @@ final class RocketViewContextInferer implements ContextInferer
     private function findMatchingController(Variable $variable): ?string
     {
         // TODO implement me
-        return "\IndexController";
+        if ($variable) {
+            return "\IndexController";
+        }
+        return null;
     }
 
     /**
