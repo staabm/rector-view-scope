@@ -11,7 +11,8 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 interface ContextInferer
 {
     /**
-     * Infers the type for the given node
+     * Tries to to infer the type for the given node.
+     * Returns null, when the inferer doesn't know a type of the given node.
      *
      * @param T $variable
      * @return TypeNode|null
