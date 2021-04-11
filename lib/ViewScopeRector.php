@@ -18,6 +18,7 @@ use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use ViewScopeRector\Inferer\RocketViewContextInferer;
@@ -36,7 +37,7 @@ class ViewScopeRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Infer view scope', [new CodeSample('', '')]);
+        return new RuleDefinition('Defines @var types for local variables in a view-script, infered from a external context.', [new CodeSample('', '')]);
     }
 
     public function getNodeTypes(): array
