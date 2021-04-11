@@ -1,4 +1,4 @@
-name: Unit tests
+name: Static Analysis
 
 on:
     push:
@@ -8,7 +8,8 @@ on:
         types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-    phpunit:
+    phpstan:
+        name: phpstan static code analysis
         runs-on: ${{ matrix.os }}
 
         strategy:
@@ -35,8 +36,5 @@ jobs:
                 with:
                     composer-options: '--ansi --prefer-dist'
 
-            -   name: Setup Problem Matchers for PHPUnit
-                run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-            -   name: Run phpunit
-                run: vendor/bin/phpunit --colors=always
+            -   name: Run phpstan analysis
+                run: vendor/bin/phpstan analyse --ansi
