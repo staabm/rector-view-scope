@@ -60,8 +60,21 @@ array(
     )
 )
         */
+        
+        if (!$this->isInViewPath($variable)) {
+            return null;
+        }
+        
+        if (!$this->isTopLevelView($variable)) {
+            return null;
+        }
 
-        $inferredType = $this->inferTypeFromController("\IndexController", $variable);
+        $controllerClass = $this->findMatchingController($variable));
+        if (!$controllerClass) {
+            return null;
+        }
+
+        $inferredType = $this->inferTypeFromController($controllerClass, $variable);
         if (!$inferredType) {
             // no matching property for the given variable, skip.
             return null;
@@ -70,6 +83,21 @@ array(
         $this->declareClassLevelDocBlock($variable, $inferredType);
 
         return $variable;
+    }
+    
+    private function isInViewPath(Variable $variable):bool {
+        // TODO implement me
+    }
+    
+    private function isTopLevelView(Variable $variable):bool {
+        // TODO implement me
+    }
+    
+    /**
+     * @return class-string|null
+     */
+    private function findMatchingController(Variable $variable): ?string {
+        // TODO implement me
     }
 
     private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
