@@ -57,7 +57,7 @@ class ViewScopeRector extends AbstractRector
             return null;
         }
 
-        $controllerClass = $this->findMatchingController($variable));
+        $controllerClass = $this->findMatchingController($variable);
         if (!$controllerClass) {
             return null;
         }
