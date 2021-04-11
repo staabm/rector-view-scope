@@ -75,10 +75,12 @@ class ViewScopeRector extends AbstractRector
     
     private function isInViewPath(Variable $variable):bool {
         // TODO implement me
+        return true;
     }
     
     private function isTopLevelView(Variable $variable):bool {
         // TODO implement me
+        return true;
     }
     
     /**
@@ -86,6 +88,7 @@ class ViewScopeRector extends AbstractRector
      */
     private function findMatchingController(Variable $variable): ?string {
         // TODO implement me
+        return "\IndexController";
     }
 
     /**
