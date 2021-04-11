@@ -18,7 +18,7 @@ use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ViewScopeRector extends AbstractRector
@@ -36,7 +36,7 @@ class ViewScopeRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Infer view scope', [new ConfiguredCodeSample('', '')]);
+        return new RuleDefinition('Infer view scope', [new CodeSample('', '')]);
     }
 
     public function getNodeTypes(): array
@@ -88,10 +88,6 @@ class ViewScopeRector extends AbstractRector
     private function findFirstViewStatement(Variable $node): Node
     {
         $topLevelParent = $this->findTopLevelStatement($node);
-
-        if (!$topLevelParent) {
-            throw new RuntimeException("should not happen");
-        }
 
         $current = $topLevelParent;
 
