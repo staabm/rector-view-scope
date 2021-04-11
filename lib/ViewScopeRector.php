@@ -60,6 +60,9 @@ class ViewScopeRector extends AbstractRector
         return $variable;
     }
 
+    /**
+     * @return void
+     */
     private function declareClassLevelDocBlock(Variable $variable, TypeNode $inferredType)
     {
         $statement = $this->findFirstViewStatement($variable);
@@ -82,12 +85,12 @@ class ViewScopeRector extends AbstractRector
         }
     }
 
-    private function findFirstViewStatement(Variable $node): ?Node
+    private function findFirstViewStatement(Variable $node): Node
     {
         $topLevelParent = $this->findTopLevelStatement($node);
 
         if (!$topLevelParent) {
-            return null;
+            throw new RuntimeException("should not happen");
         }
 
         $current = $topLevelParent;
@@ -104,11 +107,11 @@ class ViewScopeRector extends AbstractRector
         } while (true);
     }
 
-    private function findTopLevelStatement(Variable $node): ?Node
+    private function findTopLevelStatement(Variable $node): Node
     {
         $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
         if (!$parent instanceof Node) {
-            return null;
+            throw new RuntimeException("should not happen");
         }
 
         $toplevelParent = $parent;
