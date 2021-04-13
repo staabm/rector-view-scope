@@ -1,4 +1,5 @@
 {
+    "name": "staabm/rector-view-scope",
     "license": "MIT",
     "autoload": {
         "classmap": ["lib/"]
