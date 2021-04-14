@@ -60,11 +60,11 @@ class ViewScopeRector extends AbstractRector
         $controllerClass = "AdmgrpController";
         try {
             $classReflection = $this->reflectionProvider->getClass($controllerClass);
-            var_dump($classReflection);
+            var_dump(get_class($classReflection));
         } catch (\Throwable $e) {
             var_dump($e->getMessage());
         }
-
+exit();
         return null;
 
         $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->currentFileProvider);
