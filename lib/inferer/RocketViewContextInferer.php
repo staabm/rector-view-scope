@@ -81,11 +81,11 @@ final class RocketViewContextInferer implements ContextInferer
     {
         // TODO implement me
         if ($variable->name == "myspecialtest") {
-            return "AdmgrpController";
+            return '\AdmgrpController';
         }
 
         if ($variable->name != "hansipansi-nowhere-used-xxx") {
-            return "IndexController";
+            return '\IndexController';
         }
         return null;
     }
