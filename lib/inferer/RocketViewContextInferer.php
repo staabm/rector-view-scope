@@ -80,8 +80,12 @@ final class RocketViewContextInferer implements ContextInferer
     private function findMatchingController(Variable $variable): ?string
     {
         // TODO implement me
+        if ($variable->name == "myspecialtest") {
+            return "AdmgrpController";
+        }
+
         if ($variable->name != "hansipansi-nowhere-used-xxx") {
-            return "\IndexController";
+            return "IndexController";
         }
         return null;
     }
@@ -104,7 +108,11 @@ final class RocketViewContextInferer implements ContextInferer
 
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
-        $classReflection = $this->reflectionProvider->getClass($controllerClass);
+        try {
+            $classReflection = $this->reflectionProvider->getClass($controllerClass);
+        } catch (\Throwable $e) {
+            var_dump($e->getMessage());
+        }
 
         try {
             $propertyReflection = $classReflection->getProperty($propertyName, $scope);
