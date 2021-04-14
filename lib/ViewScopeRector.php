@@ -16,6 +16,7 @@ use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
+use Rector\Core\Provider\CurrentFileProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
@@ -30,9 +31,15 @@ class ViewScopeRector extends AbstractRector
      */
     private $reflectionProvider;
 
-    public function __construct(ReflectionProvider $reflectionProvider)
+    /**
+     * @var CurrentFileProvider
+     */
+    private $currentFileProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, CurrentFileProvider $currentFileProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
+        $this->currentFileProvider = $currentFileProvider;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -50,7 +57,17 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper);
+        $controllerClass = "AdmgrpController";
+        try {
+            $classReflection = $this->reflectionProvider->getClass($controllerClass);
+            var_dump($classReflection);
+        } catch (\Throwable $e) {
+            var_dump($e->getMessage());
+        }
+
+        return null;
+
+        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->currentFileProvider);
 
         $inferredType = $contextInferer->infer($variable);
         if (!$inferredType) {
