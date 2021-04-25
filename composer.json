@@ -11,7 +11,7 @@
     },
     "require": {
         "php": ">=7.4",
-        "rector/rector": "dev-fix-autolaod-in-tests as 0.10.12-dev"
+        "rector/rector": "dev-main as 0.10.12-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
