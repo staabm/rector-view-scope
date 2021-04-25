@@ -11,5 +11,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $services->set(\ViewScopeRector\ViewScopeRector::class);
 
-    $parameters->set(Option::AUTOLOAD_PATHS, [ __DIR__.'/../../myautoload.php']);
+    $parameters->set(Option::BOOTSTRAP_FILES, [ __DIR__.'/../../myautoload.php']);
 };
