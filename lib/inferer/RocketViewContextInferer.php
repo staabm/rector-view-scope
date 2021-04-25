@@ -16,8 +16,6 @@ use ViewScopeRector\ContextInferer;
 
 /**
  * Implements view-variable type inferring for view-scripts in the Rocket-Framework (close-source) context.
- *
- * @implements ContextInferer<Variable>
  */
 final class RocketViewContextInferer implements ContextInferer
 {
@@ -47,12 +45,8 @@ final class RocketViewContextInferer implements ContextInferer
         $this->currentFileProvider = $currentFileProvider;
     }
 
-    public function infer(Node $variable): ?TypeNode
+    public function infer(Variable $variable): ?TypeNode
     {
-        if (!$variable instanceof Variable) {
-            throw new \RuntimeException("should not happen");
-        }
-
         if (!$this->isInViewPath($variable)) {
             return null;
         }
