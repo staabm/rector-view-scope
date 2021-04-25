@@ -110,17 +110,9 @@ final class RocketViewContextInferer implements ContextInferer
         // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
         // https://github.com/phpstan/phpstan/discussions/4837
 
-        try {
-            $classReflection = $this->reflectionProvider->getClass($controllerClass);
-            $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+        $classReflection = $this->reflectionProvider->getClass($controllerClass);
+        $propertyReflection = $classReflection->getProperty($propertyName, $scope);
 
-            return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
-        } catch (MissingPropertyFromReflectionException $e) {
-            var_dump($e->getMessage());
-        } catch (\Throwable $e) {
-            var_dump($e->getMessage());
-        }
-
-        return null;
+        return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
     }
 }
