@@ -116,13 +116,14 @@ final class RocketViewContextInferer implements ContextInferer
         try {
             $classReflection = $this->reflectionProvider->getClass($controllerClass);
             $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+            
+            return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
         } catch (MissingPropertyFromReflectionException $e) {
             var_dump($e->getMessage());
-            return null;
         } catch (\Throwable $e) {
             var_dump($e->getMessage());
         }
 
-        return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
+        return null;
     }
 }
