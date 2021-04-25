@@ -8,6 +8,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
+use Rector\Core\Provider\CurrentFileProvider;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\StaticTypeMapper\StaticTypeMapper;
@@ -33,11 +34,17 @@ final class RocketViewContextInferer implements ContextInferer
      */
     private $staticTypeMapper;
 
-    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper)
+    /**
+     * @var CurrentFileProvider
+     */
+    private $currentFileProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, CurrentFileProvider $currentFileProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->staticTypeMapper = $staticTypeMapper;
+        $this->currentFileProvider = $currentFileProvider;
     }
 
     public function infer(Node $variable): ?TypeNode
@@ -74,9 +81,6 @@ final class RocketViewContextInferer implements ContextInferer
         return true;
     }
 
-    /**
-     * @return class-string|null
-     */
     private function findMatchingController(Variable $variable): ?string
     {
         // TODO implement me
