@@ -94,7 +94,7 @@ final class RocketViewContextInferer implements ContextInferer
         return null;
     }
 
-    private function inferTypeFromController(string $controllerClass, Variable $node): ?TypeNode
+    private function inferTypeFromController(string $controllerClass, Variable $node): TypeNode
     {
         /** @var Scope|null $scope */
         $scope = $node->getAttribute(AttributeKey::SCOPE);
