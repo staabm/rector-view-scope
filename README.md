@@ -1,4 +1,4 @@
-# Problemspace test
+# Problemspace
 
 `ViewScopeRector` is your helper to make static analysis tools aware of variable-types within view-scripts infered from a external context. 
 
