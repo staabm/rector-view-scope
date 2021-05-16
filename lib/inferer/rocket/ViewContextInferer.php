@@ -1,6 +1,6 @@
 <?php
 
-namespace ViewScopeRector\Inferer;
+namespace ViewScopeRector\Inferer\Rocket;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
@@ -17,7 +17,7 @@ use ViewScopeRector\ContextInferer;
 /**
  * Implements view-variable type inferring for view-scripts in the Rocket-Framework (close-source) context.
  */
-final class RocketViewContextInferer implements ContextInferer
+final class ViewContextInferer implements ContextInferer
 {
     /**
      * @var ReflectionProvider
@@ -77,6 +77,16 @@ final class RocketViewContextInferer implements ContextInferer
 
     private function findMatchingController(Variable $variable): ?string
     {
+        $path = $this->currentFileProvider->getFile()->getSmartFileInfo()->getRealPath();
+
+        $viewRootPos = strpos($path, DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR);
+        var_dump($path);
+        var_dump($viewRootPos);
+        if ($viewRootPos !== false) {
+            $viewPath = substr($path, $viewRootPos+1);
+            var_dump($viewPath);
+        }
+
         // TODO implement me
         if ($variable->name == "myspecialtest") {
             return '\AdmgrpController';
