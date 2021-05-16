@@ -36,6 +36,10 @@ final class ViewContextInferer implements ContextInferer
      * @var CurrentFileProvider
      */
     private $currentFileProvider;
+    /**
+     * @var FileLocator
+     */
+    private $fileLocator;
 
     public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, CurrentFileProvider $currentFileProvider)
     {
@@ -47,45 +51,22 @@ final class ViewContextInferer implements ContextInferer
 
     public function infer(Variable $variable): ?TypeNode
     {
-        if (!$this->isInViewPath($variable)) {
+        $this->fileLocator = new \TestFileLocator($variable);
+
+        if (!$this->fileLocator->isInViewPath()) {
             return null;
         }
 
-        if (!$this->isTopLevelView($variable)) {
+        if (!$this->fileLocator->isTopLevelView()) {
             return null;
         }
 
-        $controllerClass = $this->findMatchingController($variable);
+        $controllerClass = $this->fileLocator->findMatchingController();
         if (!$controllerClass) {
             return null;
         }
 
         return $this->inferTypeFromController($controllerClass, $variable);
-    }
-
-    private function isInViewPath(Variable $variable): bool
-    {
-        // TODO implement me
-        return true;
-    }
-
-    private function isTopLevelView(Variable $variable): bool
-    {
-        // TODO implement me
-        return true;
-    }
-
-    private function findMatchingController(Variable $variable): ?string
-    {
-        // TODO implement me
-        if ($variable->name == "myspecialtest") {
-            return '\AdmgrpController';
-        }
-
-        if ($variable->name != "hansipansi-nowhere-used-xxx") {
-            return '\IndexController';
-        }
-        return null;
     }
 
     private function inferTypeFromController(string $controllerClass, Variable $node): ?TypeNode
