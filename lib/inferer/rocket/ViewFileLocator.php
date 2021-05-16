@@ -27,7 +27,7 @@ final class ViewFileLocator implements \ViewScopeRector\Inferer\Rocket\FileLocat
         if (!$this->isInViewPath()) {
             return false;
         }
-        
+
         return strpos($this->filePath, DIRECTORY_SEPARATOR.'_') === false;
     }
 

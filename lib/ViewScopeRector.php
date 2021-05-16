@@ -24,6 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use ViewScopeRector\Inferer\Rocket\FileLocator;
+use ViewScopeRector\Inferer\Rocket\TestFileLocator;
 use ViewScopeRector\Inferer\Rocket\ViewContextInferer;
 use ViewScopeRector\Inferer\Rocket\ViewFileLocator;
 
@@ -72,8 +73,8 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        if ($this->locatorClass === \TestFileLocator::class) {
-            $fileLocator = new \TestFileLocator($variable);
+        if ($this->locatorClass === TestFileLocator::class) {
+            $fileLocator = new TestFileLocator($variable);
         } elseif ($this->locatorClass === ViewFileLocator::class) {
             $fileLocator = new ViewFileLocator($this->file->getSmartFileInfo()->getRealPath());
         } else {

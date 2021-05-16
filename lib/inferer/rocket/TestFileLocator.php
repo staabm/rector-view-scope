@@ -1,8 +1,10 @@
 <?php
 
+namespace ViewScopeRector\Inferer\Rocket;
+
 use PhpParser\Node\Expr\Variable;
 
-final class TestFileLocator implements \ViewScopeRector\Inferer\Rocket\FileLocator
+final class TestFileLocator implements FileLocator
 {
     /**
      * @var Variable
@@ -15,13 +17,11 @@ final class TestFileLocator implements \ViewScopeRector\Inferer\Rocket\FileLocat
 
     public function isInViewPath(): bool
     {
-        // TODO implement me
         return true;
     }
 
     public function isTopLevelView(): bool
     {
-        // TODO implement me
         return true;
     }
 
@@ -29,7 +29,6 @@ final class TestFileLocator implements \ViewScopeRector\Inferer\Rocket\FileLocat
     {
         $variable = $this->variable;
 
-        // TODO implement me
         if ($variable->name == "myspecialtest") {
             return '\AdmgrpController';
         }
