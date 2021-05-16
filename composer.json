@@ -6,7 +6,7 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/classes/"
+            "tests/rector/classes/"
         ]
     },
     "require": {
