@@ -30,3 +30,4 @@ so in the end the rector should change the example view to
  */
 echo $hello;
 ```
+
