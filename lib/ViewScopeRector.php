@@ -22,7 +22,7 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use ViewScopeRector\Inferer\RocketViewContextInferer;
+use ViewScopeRector\Inferer\Rocket\ViewContextInferer;
 
 class ViewScopeRector extends AbstractRector
 {
@@ -57,7 +57,7 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->currentFileProvider);
+        $contextInferer = new ViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->currentFileProvider);
 
         $inferredType = $contextInferer->infer($variable);
         if (!$inferredType) {
