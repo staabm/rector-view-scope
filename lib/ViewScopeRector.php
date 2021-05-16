@@ -31,15 +31,9 @@ class ViewScopeRector extends AbstractRector
      */
     private $reflectionProvider;
 
-    /**
-     * @var CurrentFileProvider
-     */
-    private $currentFileProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider, CurrentFileProvider $currentFileProvider)
+    public function __construct(ReflectionProvider $reflectionProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
-        $this->currentFileProvider = $currentFileProvider;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -57,7 +51,7 @@ class ViewScopeRector extends AbstractRector
      */
     public function refactor(Node $variable): ?Node
     {
-        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->currentFileProvider);
+        $contextInferer = new RocketViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $this->file->getSmartFileInfo());
 
         $inferredType = $contextInferer->infer($variable);
         if (!$inferredType) {

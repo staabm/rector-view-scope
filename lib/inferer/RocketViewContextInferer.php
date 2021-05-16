@@ -5,6 +5,7 @@ namespace ViewScopeRector\Inferer;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\Reflection\DirectClassReflectionExtensionRegistryProvider;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
@@ -12,6 +13,7 @@ use Rector\Core\Provider\CurrentFileProvider;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\StaticTypeMapper\StaticTypeMapper;
+use Symplify\SmartFileSystem\SmartFileInfo;
 use ViewScopeRector\ContextInferer;
 
 /**
@@ -33,25 +35,25 @@ final class RocketViewContextInferer implements ContextInferer
     private $staticTypeMapper;
 
     /**
-     * @var CurrentFileProvider
+     * @var SmartFileInfo
      */
-    private $currentFileProvider;
+    private $file;
 
-    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, CurrentFileProvider $currentFileProvider)
+    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, SmartFileInfo $file)
     {
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->staticTypeMapper = $staticTypeMapper;
-        $this->currentFileProvider = $currentFileProvider;
+        $this->file = $file;
     }
 
     public function infer(Variable $variable): ?TypeNode
     {
-        if (!$this->isInViewPath($variable)) {
+        if (!$this->isInViewPath()) {
             return null;
         }
 
-        if (!$this->isTopLevelView($variable)) {
+        if (!$this->isTopLevelView()) {
             return null;
         }
 
@@ -63,16 +65,14 @@ final class RocketViewContextInferer implements ContextInferer
         return $this->inferTypeFromController($controllerClass, $variable);
     }
 
-    private function isInViewPath(Variable $variable): bool
+    private function isInViewPath(): bool
     {
-        // TODO implement me
-        return true;
+        return strpos($this->file->getRealPath(), DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR) !== false;
     }
 
-    private function isTopLevelView(Variable $variable): bool
+    private function isTopLevelView(): bool
     {
-        // TODO implement me
-        return true;
+        return strpos($this->file->getRealPath(), DIRECTORY_SEPARATOR.'_') === false;
     }
 
     private function findMatchingController(Variable $variable): ?string
