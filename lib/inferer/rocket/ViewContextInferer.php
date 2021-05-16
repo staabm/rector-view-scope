@@ -77,16 +77,6 @@ final class ViewContextInferer implements ContextInferer
 
     private function findMatchingController(Variable $variable): ?string
     {
-        $path = $this->currentFileProvider->getFile()->getSmartFileInfo()->getRealPath();
-
-        $viewRootPos = strpos($path, DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR);
-        var_dump($path);
-        var_dump($viewRootPos);
-        if ($viewRootPos !== false) {
-            $viewPath = substr($path, $viewRootPos+1);
-            var_dump($viewPath);
-        }
-
         // TODO implement me
         if ($variable->name == "myspecialtest") {
             return '\AdmgrpController';
