@@ -33,26 +33,20 @@ final class ViewContextInferer implements ContextInferer
     private $staticTypeMapper;
 
     /**
-     * @var CurrentFileProvider
-     */
-    private $currentFileProvider;
-    /**
      * @var FileLocator
      */
     private $fileLocator;
 
-    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, CurrentFileProvider $currentFileProvider)
+    public function __construct(ReflectionProvider $reflectionProvider, NodeNameResolver $nodeNameResolver, StaticTypeMapper $staticTypeMapper, FileLocator $fileLocator)
     {
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->staticTypeMapper = $staticTypeMapper;
-        $this->currentFileProvider = $currentFileProvider;
+        $this->fileLocator = $fileLocator;
     }
 
     public function infer(Variable $variable): ?TypeNode
     {
-        $this->fileLocator = new \TestFileLocator($variable);
-
         if (!$this->fileLocator->isInViewPath()) {
             return null;
         }
