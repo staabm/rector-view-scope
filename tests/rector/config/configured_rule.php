@@ -9,7 +9,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
     $parameters = $containerConfigurator->parameters();
 
-    $services->set(\ViewScopeRector\ViewScopeRector::class);
+    $services->set(\ViewScopeRector\ViewScopeRector::class)
+        ->call('configure', [[
+            \ViewScopeRector\ViewScopeRector::LOCATOR_CLASS => TestFileLocator::class,
+        ]]);
 
     $parameters->set(Option::BOOTSTRAP_FILES, [ __DIR__.'/../myautoload.php']);
 };

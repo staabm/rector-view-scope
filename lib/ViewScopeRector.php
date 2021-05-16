@@ -16,16 +16,28 @@ use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPUnit\TextUI\XmlConfiguration\TestFile;
 use Rector\Core\Provider\CurrentFileProvider;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use ViewScopeRector\Inferer\Rocket\FileLocator;
 use ViewScopeRector\Inferer\Rocket\ViewContextInferer;
+use ViewScopeRector\Inferer\Rocket\ViewFileLocator;
 
 class ViewScopeRector extends AbstractRector
 {
+    /**
+     * @var string
+     */
+    public const LOCATOR_CLASS = 'locator_impl';
+    /**
+     * @var class-string<FileLocator>
+     */
+    private $locatorClass;
+
     /**
      * @var ReflectionProvider
      */
@@ -34,6 +46,7 @@ class ViewScopeRector extends AbstractRector
     public function __construct(ReflectionProvider $reflectionProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
+        $this->locatorClass = ViewFileLocator::class;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -47,11 +60,26 @@ class ViewScopeRector extends AbstractRector
     }
 
     /**
+     * @param array<string, class-string<FileLocator>> $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        $this->locatorClass = $configuration[self::LOCATOR_CLASS] ?? ViewFileLocator::class;
+    }
+
+    /**
      * @param Variable $variable
      */
     public function refactor(Node $variable): ?Node
     {
-        $fileLocator = new \TestFileLocator($variable);
+        if ($this->locatorClass === \TestFileLocator::class) {
+            $fileLocator = new \TestFileLocator($variable);
+        } elseif ($this->locatorClass === ViewFileLocator::class) {
+            $fileLocator = new ViewFileLocator($this->file->getSmartFileInfo()->getRealPath());
+        } else {
+            throw new \RuntimeException('Unknown file localtor '. $this->locatorClass);
+        }
+
         $contextInferer = new ViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $fileLocator);
 
         $inferredType = $contextInferer->infer($variable);
