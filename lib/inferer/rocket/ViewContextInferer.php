@@ -65,23 +65,16 @@ final class ViewContextInferer implements ContextInferer
 
     private function inferTypeFromController(string $controllerClass, Variable $node): ?TypeNode
     {
-        /** @var Scope|null $scope */
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if ($scope === null) {
-            throw new \RuntimeException("should not happen");
-        }
-
         $propertyName = $this->nodeNameResolver->getName($node);
         if ($propertyName === null) {
-            throw new \RuntimeException("should not happen");
+            return null;
+            // XXX
+            // throw new \RuntimeException("should not happen");
         }
-
-        // XXX ondrey hinted that ClassReflection::getNativeProperty() might be enough
-        // https://github.com/phpstan/phpstan/discussions/4837
 
         try {
             $classReflection = $this->reflectionProvider->getClass($controllerClass);
-            $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+            $propertyReflection = $classReflection->getNativeProperty($propertyName);
 
             return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
         } catch (MissingPropertyFromReflectionException $e) {
