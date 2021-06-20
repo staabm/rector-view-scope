@@ -23,7 +23,7 @@ echo $hello;
 
 the rector should lookup the controller-class via static reflection, [infer the type of its properties](https://github.com/staabm/rector-view-scope/blob/main/lib/ContextInferer.php) and with this knowledge adjust/create a `@var` phpdoc in the view file.
 
-so in the end the rector should change the example view to
+so in the end the rector will change the example view to
 ```php
 /**
  * @var string
