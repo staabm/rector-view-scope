@@ -2,6 +2,12 @@
 
 `ViewScopeRector` is your helper to make static analysis tools aware of variable-types within view-scripts infered from a external context. 
 
+## Summary
+
+This rector includes the mechanics of scanning procedural php files (e.g. views) and calling a given [ContextInferer](https://github.com/staabm/rector-view-scope/blob/main/lib/ContextInferer.php). It afterwards updates the view-files global `@var` phpdocs to reflect the types, the ContextInferer determinded beforehand.
+
+A example implementation is shipped with [ViewContextInferer](https://github.com/staabm/rector-view-scope/blob/main/lib/inferer/rocket/ViewContextInferer.php), which implements Ruby'on Rails like view <–> controller type inference.
+
 ## example big picture
 
 this rector is meant to introduce `@var` phpdocs into analyzed view files, e.g. based on declared public properties of a corresponding controller.
