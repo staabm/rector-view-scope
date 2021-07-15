@@ -10,6 +10,7 @@ use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Provider\CurrentFileProvider;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PHPStanStaticTypeMapper\ValueObject\TypeKind;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use ViewScopeRector\ContextInferer;
@@ -76,7 +77,7 @@ final class ViewContextInferer implements ContextInferer
             $classReflection = $this->reflectionProvider->getClass($controllerClass);
             $propertyReflection = $classReflection->getNativeProperty($propertyName);
 
-            return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType());
+            return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType(), TypeKind::PROPERTY());
         } catch (MissingPropertyFromReflectionException $e) {
             return null;
         }
