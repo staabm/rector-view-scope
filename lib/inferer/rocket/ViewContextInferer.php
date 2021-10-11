@@ -7,6 +7,7 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
+use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Core\Provider\CurrentFileProvider;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -78,6 +79,9 @@ final class ViewContextInferer implements ContextInferer
             $propertyReflection = $classReflection->getNativeProperty($propertyName);
 
             return $this->staticTypeMapper->mapPHPStanTypeToPHPStanPhpDocTypeNode($propertyReflection->getReadableType(), TypeKind::PROPERTY());
+        } catch (ClassNotFoundException $e) {
+            // we don't necessariliy find a same-named controller for each view-file (layouts, mails,..)
+            return null;
         } catch (MissingPropertyFromReflectionException $e) {
             return null;
         }
