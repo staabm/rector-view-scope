@@ -2,17 +2,13 @@
 
 namespace ViewScopeRector\Inferer\Rocket;
 
-use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
-use PHPStan\Analyser\Scope;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\MissingPropertyFromReflectionException;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\Core\Provider\CurrentFileProvider;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\PHPStanStaticTypeMapper\ValueObject\TypeKind;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use ViewScopeRector\ContextInferer;
 
