@@ -78,7 +78,7 @@ class ViewScopeRector extends AbstractRector
         } elseif ($this->locatorClass === ViewFileLocator::class) {
             $fileLocator = new ViewFileLocator($this->file->getSmartFileInfo()->getRealPath());
         } else {
-            throw new \RuntimeException('Unknown file localtor '. $this->locatorClass);
+            throw new \RuntimeException('Unknown file locator '. $this->locatorClass);
         }
 
         $contextInferer = new ViewContextInferer($this->reflectionProvider, $this->nodeNameResolver, $this->staticTypeMapper, $fileLocator);
